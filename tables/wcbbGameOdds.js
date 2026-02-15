@@ -1,4 +1,4 @@
-// tables/cbbGameOdds.js - College Basketball Game Odds Table
+// tables/wcbbGameOdds.js - Women's College Basketball Game Odds Table
 // Always displays full team names (no abbreviations available)
 // EV% and Kelly% values multiplied by 100 before display
 // Full width management: scanDataForMaxWidths, equalizeClusteredColumns, calculateAndApplyWidths
@@ -11,9 +11,9 @@ import { isMobile, isTablet } from '../shared/config.js';
 
 const EV_KELLY_COLUMN_MIN_WIDTH = 65;
 
-export class CBBGameOddsTable extends BaseTable {
+export class WCBBGameOddsTable extends BaseTable {
     constructor(elementId) {
-        super(elementId, 'CBBallGameOdds');
+        super(elementId, 'CBBallWGameOdds');
     }
 
     initialize() {
@@ -27,18 +27,18 @@ export class CBBGameOddsTable extends BaseTable {
             columns: this.getColumns(isSmallScreen),
             initialSort: [{column: "EV %", dir: "desc"}],
             dataLoaded: (data) => {
-                console.log(`CBB Game Odds loaded ${data.length} records`);
+                console.log(`WCBB Game Odds loaded ${data.length} records`);
                 this.dataLoaded = true;
                 const element = document.querySelector(this.elementId);
                 if (element) { const ld = element.querySelector('.loading-indicator'); if (ld) ld.remove(); }
             },
-            ajaxError: (error) => { console.error("Error loading CBB game odds:", error); }
+            ajaxError: (error) => { console.error("Error loading WCBB game odds:", error); }
         };
 
         this.table = new Tabulator(this.elementId, config);
         
         this.table.on("tableBuilt", () => {
-            console.log("CBB Game Odds table built");
+            console.log("WCBB Game Odds table built");
             setTimeout(() => {
                 const data = this.table ? this.table.getData() : [];
                 if (data.length > 0) {
@@ -216,7 +216,7 @@ export class CBBGameOddsTable extends BaseTable {
             const tc = tableElement.closest('.table-container');
             if (tc) { tc.style.width = 'fit-content'; tc.style.minWidth = 'auto'; tc.style.maxWidth = 'none'; }
         } catch (error) {
-            console.error('CBB Game Odds calculateAndApplyWidths error:', error);
+            console.error('WCBB Game Odds calculateAndApplyWidths error:', error);
         }
     }
 
@@ -261,7 +261,7 @@ export class CBBGameOddsTable extends BaseTable {
         const kellyFormatter = (cell) => {
             const v = cell.getValue(); if (v == null || v === '' || v === '-') return '-';
             const n = parseFloat(v); if (isNaN(n)) return '-';
-            const bankroll = getBankrollValue('CBB Game Quarter Kelly %');
+            const bankroll = getBankrollValue('WCBB Game Quarter Kelly %');
             if (bankroll > 0) {
                 const amount = n * bankroll;
                 return '$' + amount.toFixed(2);
@@ -271,7 +271,7 @@ export class CBBGameOddsTable extends BaseTable {
         const linkFormatter = (cell) => {
             const v = cell.getValue(); if (!v || v === '-' || v === '') return '-';
             const a = document.createElement('a'); a.href = v; a.target = '_blank'; a.rel = 'noopener noreferrer';
-            a.textContent = 'Bet'; a.style.cssText = 'color: #b8860b; text-decoration: underline; font-weight: 500;'; return a;
+            a.textContent = 'Bet'; a.style.cssText = 'color: #d63384; text-decoration: underline; font-weight: 500;'; return a;
         };
 
         return [
@@ -335,7 +335,7 @@ export class CBBGameOddsTable extends BaseTable {
                 title: "Bet Size", field: "Quarter Kelly %", widthGrow: 0, minWidth: EV_KELLY_COLUMN_MIN_WIDTH,
                 sorter: function(a, b) { return self.percentSorter(a, b); },
                 headerFilter: createBankrollInput, headerFilterFunc: bankrollFilterFunction,
-                headerFilterLiveFilter: false, headerFilterParams: { bankrollKey: 'CBB Game Quarter Kelly %' },
+                headerFilterLiveFilter: false, headerFilterParams: { bankrollKey: 'WCBB Game Quarter Kelly %' },
                 resizable: false, formatter: kellyFormatter, hozAlign: "center", cssClass: "cluster-ev-kelly"
             },
             {
