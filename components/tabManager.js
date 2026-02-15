@@ -1,6 +1,6 @@
-// components/tabManager.js - Tab Manager for College Basketball Tables
-// 3 tabs: Matchups, Prop Odds, Game Odds
-// Includes applyContainerWidth and forceRecalculateWidths matching NBA pattern
+// components/tabManager.js - Tab Manager for Women's College Basketball Tables
+// 2 tabs: Matchups, Game Odds
+// Includes applyContainerWidth and forceRecalculateWidths matching pattern
 
 export const TAB_STYLES = `
     .table-wrapper {
@@ -23,7 +23,7 @@ export const TAB_STYLES = `
         flex-wrap: wrap;
         gap: 5px;
         padding: 10px;
-        background: linear-gradient(135deg, #b8860b 0%, #996515 100%);
+        background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%);
         border-radius: 8px 8px 0 0;
         margin-bottom: 0;
     }
@@ -48,7 +48,7 @@ export const TAB_STYLES = `
     
     .tab-button.active {
         background: white;
-        color: #996515;
+        color: #b02a6e;
         font-weight: bold;
     }
     
@@ -115,7 +115,7 @@ export class TabManager {
     }
 
     getContainerIdForTab(tabId) {
-        return { 'table0': 'table0-container', 'table1': 'table1-container', 'table2': 'table2-container' }[tabId] || `${tabId}-container`;
+        return { 'table0': 'table0-container', 'table1': 'table1-container' }[tabId] || `${tabId}-container`;
     }
 
     applyContainerWidth(tableContainer) {
