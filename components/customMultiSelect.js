@@ -1,5 +1,5 @@
 // components/customMultiSelect.js - Custom Multi-Select Dropdown Filter for Tabulator
-// DIRECT COPY of NBA basketball version with color change (#f97316 -> #b8860b)
+// DIRECT COPY of NBA basketball version with color change (#f97316 -> #d63384)
 // Dropdowns open ABOVE the table header
 // Includes state sync, expanded row preservation, debounced filter updates
 
@@ -184,7 +184,7 @@ export function createCustomMultiSelect(cell, onRendered, success, cancel, optio
             button.style.color = "#333";
         } else {
             button.textContent = selectedValues.length + " of " + allValues.length;
-            button.style.color = "#b8860b";
+            button.style.color = "#d63384";
         }
     }
     
@@ -208,7 +208,7 @@ export function createCustomMultiSelect(cell, onRendered, success, cancel, optio
         
         var label = document.createElement('span');
         label.textContent = isSelectAll ? (selectedValues.length === allValues.length ? 'Deselect All' : 'Select All') : value;
-        label.style.cssText = isSelectAll ? 'font-weight: bold; color: #b8860b;' : '';
+        label.style.cssText = isSelectAll ? 'font-weight: bold; color: #d63384;' : '';
         
         if (isSelectAll) {
             checkbox.checked = selectedValues.length === allValues.length;
