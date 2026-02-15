@@ -1,43 +1,43 @@
-// main.js - College Basketball Props Table System
-// 3 tables: Matchups, Prop Odds, Game Odds
-// No expandable rows, no global expanded state
+// main.js - Women's College Basketball Props Table System
+// 2 tables: Matchups, Game Odds
+// No expandable rows, no prop odds table
 
 import { injectStyles } from './styles/tableStyles.js';
-import { CBBMatchupsTable } from './tables/cbbwMatchups.js';
-import { CBBGameOddsTable } from './tables/cbbwGameOdds.js';
+import { WCBBMatchupsTable } from './tables/wcbbMatchups.js';
+import { WCBBGameOddsTable } from './tables/wcbbGameOdds.js';
 import { TabManager } from './components/tabManager.js';
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM loaded - initializing college basketball table system");
+    console.log("DOM loaded - initializing women's college basketball table system");
     
     // Inject styles first
     injectStyles();
     
-    // Find the existing cbb-table element
-    const existingTable = document.getElementById('cbb-table');
+    // Find the existing wcbb-table element
+    const existingTable = document.getElementById('wcbb-table');
     if (!existingTable) {
-        console.log("No cbb-table element found - cannot proceed");
+        console.log("No wcbb-table element found - cannot proceed");
         return;
     }
 
-    console.log("Found cbb-table element, creating structure...");
+    console.log("Found wcbb-table element, creating structure...");
 
     try {
         createTableStructure(existingTable);
         
         const tableInstances = {
-            table0: new CBBMatchupsTable("#matchups-table"),
-            table1: new CBBGameOddsTable("#game-odds-table")
+            table0: new WCBBMatchupsTable("#matchups-table"),
+            table1: new WCBBGameOddsTable("#game-odds-table")
         };
         
         const tabManager = new TabManager(tableInstances);
         window.tabManager = tabManager;
-        window.cbbTables = tableInstances;
+        window.wcbbTables = tableInstances;
         
-        console.log("College basketball table system initialized successfully!");
+        console.log("Women's college basketball table system initialized successfully!");
         
     } catch (error) {
-        console.error("Error initializing CBB table system:", error);
+        console.error("Error initializing WCBB table system:", error);
     }
 });
 
@@ -53,7 +53,7 @@ function createTableStructure(existingTable) {
     tabsContainer.innerHTML = `
         <div class="tab-buttons">
             <button class="tab-button active" data-tab="table0">Matchups</button>
-            <button class="tab-button" data-tab="table2">Game Odds</button>
+            <button class="tab-button" data-tab="table1">Game Odds</button>
         </div>
     `;
     
@@ -75,12 +75,12 @@ function createTableStructure(existingTable) {
     // Table 1 - Game Odds (inactive)
     const gameOddsElement = document.createElement('div');
     gameOddsElement.id = 'game-odds-table';
-    const table2Container = document.createElement('div');
-    table2Container.className = 'table-container inactive-table';
-    table2Container.id = 'table2-container';
-    table2Container.style.cssText = 'width: 100%; display: none;';
-    table2Container.appendChild(gameOddsElement);
-    tablesContainer.appendChild(table2Container);
+    const table1Container = document.createElement('div');
+    table1Container.className = 'table-container inactive-table';
+    table1Container.id = 'table1-container';
+    table1Container.style.cssText = 'width: 100%; display: none;';
+    table1Container.appendChild(gameOddsElement);
+    tablesContainer.appendChild(table1Container);
     
     // Assemble
     tabWrapper.appendChild(tabsContainer);
@@ -94,5 +94,5 @@ function createTableStructure(existingTable) {
         document.body.appendChild(tabWrapper);
     }
     
-    console.log("Table structure created (3 tables)");
+    console.log("Table structure created (2 tables)");
 }
