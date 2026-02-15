@@ -1,5 +1,5 @@
 // components/minMaxFilter.js - Min/Max Range Filter for Tabulator
-// DIRECT COPY of NBA basketball version with color change (#f97316 -> #b8860b)
+// DIRECT COPY of NBA basketball version with color change (#f97316 -> #d63384)
 // Compact dual-input filter for numeric columns (prop values, odds)
 
 export function createMinMaxFilter(cell, onRendered, success, cancel, editorParams = {}) {
@@ -74,8 +74,8 @@ export function createMinMaxFilter(cell, onRendered, success, cancel, editorPara
     });
     
     minInput.addEventListener('focus', function() {
-        minInput.style.borderColor = '#b8860b';
-        minInput.style.boxShadow = '0 0 0 1px rgba(184, 134, 11, 0.2)';
+        minInput.style.borderColor = '#d63384';
+        minInput.style.boxShadow = '0 0 0 1px rgba(214, 51, 132, 0.2)';
     });
     
     minInput.addEventListener('blur', function() {
@@ -84,8 +84,8 @@ export function createMinMaxFilter(cell, onRendered, success, cancel, editorPara
     });
     
     maxInput.addEventListener('focus', function() {
-        maxInput.style.borderColor = '#b8860b';
-        maxInput.style.boxShadow = '0 0 0 1px rgba(184, 134, 11, 0.2)';
+        maxInput.style.borderColor = '#d63384';
+        maxInput.style.boxShadow = '0 0 0 1px rgba(214, 51, 132, 0.2)';
     });
     
     maxInput.addEventListener('blur', function() {
