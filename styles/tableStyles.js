@@ -1,9 +1,9 @@
 // styles/tableStyles.js - College Basketball Table Styles
 // DIRECT COPY of NBA basketball tableStyles.js with color changes:
-//   #f97316 -> #b8860b (dark goldenrod)
-//   #ea580c -> #996515 (darker gold)
-//   #fff7ed -> #fdf6e3 (light parchment hover)
-//   #ffedd5 -> #f5ecd0 (parchment)
+//   #f97316 -> #d63384 (dark goldenrod)
+//   #ea580c -> #b02a6e (darker gold)
+//   #fff7ed -> #fef0f5 (light parchment hover)
+//   #ffedd5 -> #fce4ec (parchment)
 // Includes: grey background, min/max stacking, frozen columns, scrollbar fix,
 //   standalone header alignment, mobile frozen column support
 
@@ -23,10 +23,10 @@ export function injectStyles() {
 }
 
 function injectScrollbarFix() {
-    if (document.querySelector('#cbb-scrollbar-fix')) return;
+    if (document.querySelector('#wcbb-scrollbar-fix')) return;
     
     const scrollbarStyle = document.createElement('style');
-    scrollbarStyle.id = 'cbb-scrollbar-fix';
+    scrollbarStyle.id = 'wcbb-scrollbar-fix';
     scrollbarStyle.textContent = `
         /* =====================================================
            SCROLLBAR FIX - Counters Webflow's aggressive hiding
@@ -57,7 +57,7 @@ function injectScrollbarFix() {
             html body .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb,
             html body div.tabulator div.tabulator-tableholder::-webkit-scrollbar-thumb {
                 display: block !important;
-                background: #b8860b !important;
+                background: #d63384 !important;
                 border-radius: 8px !important;
                 visibility: visible !important;
                 min-height: 50px !important;
@@ -65,14 +65,14 @@ function injectScrollbarFix() {
             
             html body .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb:hover,
             html body div.tabulator div.tabulator-tableholder::-webkit-scrollbar-thumb:hover {
-                background: #996515 !important;
+                background: #b02a6e !important;
             }
             
             /* Also set Firefox scrollbar */
             html body .tabulator .tabulator-tableholder,
             html body div.tabulator div.tabulator-tableholder {
                 scrollbar-width: thin !important;
-                scrollbar-color: #b8860b #f1f1f1 !important;
+                scrollbar-color: #d63384 #f1f1f1 !important;
             }
         }
         
@@ -106,10 +106,10 @@ function injectScrollbarFix() {
 }
 
 function injectMinimalStyles() {
-    if (document.querySelector('style[data-source="cbb-minimal"]')) return;
+    if (document.querySelector('style[data-source="wcbb-minimal"]')) return;
     
     const style = document.createElement('style');
-    style.setAttribute('data-source', 'cbb-minimal');
+    style.setAttribute('data-source', 'wcbb-minimal');
     style.textContent = `
         /* Ensure table and containers are visible */
         .tabulator {
@@ -198,11 +198,11 @@ function injectMinimalStyles() {
             }
             /* Frozen columns should have solid background */
             .tabulator-header .tabulator-frozen {
-                background: linear-gradient(135deg, #b8860b 0%, #996515 100%) !important;
+                background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%) !important;
                 z-index: 100 !important;
             }
             .tabulator-header .tabulator-col.tabulator-frozen {
-                background: linear-gradient(135deg, #b8860b 0%, #996515 100%) !important;
+                background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%) !important;
             }
         }
         
@@ -302,7 +302,7 @@ function injectMinimalStyles() {
                 background: #ffffff !important;
             }
             .tabulator-row:hover .tabulator-cell.tabulator-frozen {
-                background: #fdf6e3 !important;
+                background: #fef0f5 !important;
             }
             .tabulator-header .tabulator-col.tabulator-frozen {
                 position: sticky !important;
@@ -312,7 +312,7 @@ function injectMinimalStyles() {
         }
     `;
     document.head.appendChild(style);
-    console.log('CBB minimal styles injected with grey background, min/max stacking, frozen column fix');
+    console.log('WCBB minimal styles injected with grey background, min/max stacking, frozen column fix');
 }
 
 function injectFullStyles() {
@@ -323,11 +323,11 @@ function injectFullStyles() {
     const baseFontSize = mobile ? 10 : tablet ? 11 : 12;
     
     const style = document.createElement('style');
-    style.setAttribute('data-source', 'cbb-full');
+    style.setAttribute('data-source', 'wcbb-full');
     style.setAttribute('data-table-styles', 'github');
     style.textContent = `
         /* ===================================
-           CBB TABLE STYLES
+           WCBB TABLE STYLES
            Direct copy of NBA with color changes
            =================================== */
         
@@ -381,7 +381,7 @@ function injectFullStyles() {
         
         /* Header styles - dark goldenrod gradient */
         .tabulator-header {
-            background: linear-gradient(135deg, #b8860b 0%, #996515 100%);
+            background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%);
             color: white;
             font-weight: 600;
         }
@@ -419,7 +419,7 @@ function injectFullStyles() {
         }
         
         .tabulator-row:hover {
-            background-color: #fdf6e3;
+            background-color: #fef0f5;
         }
         
         /* Cell styles - SINGLE LINE with ellipsis */
@@ -444,19 +444,19 @@ function injectFullStyles() {
             }
             
             .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb {
-                background: #b8860b;
+                background: #d63384;
                 border-radius: 8px;
                 min-height: 50px;
             }
             
             .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb:hover {
-                background: #996515;
+                background: #b02a6e;
             }
             
             /* Firefox */
             .tabulator .tabulator-tableholder {
                 scrollbar-width: auto;
-                scrollbar-color: #b8860b #f1f1f1;
+                scrollbar-color: #d63384 #f1f1f1;
             }
         }
         
@@ -487,13 +487,13 @@ function injectFullStyles() {
         }
         
         .custom-multiselect-button:hover {
-            border-color: #b8860b;
+            border-color: #d63384;
         }
         
         .custom-multiselect-button:focus {
             outline: none;
-            border-color: #b8860b;
-            box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.2);
+            border-color: #d63384;
+            box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.2);
         }
         
         /* =====================================================
@@ -507,13 +507,13 @@ function injectFullStyles() {
         }
         
         .tabulator-frozen.tabulator-frozen-left {
-            border-right: 1px solid rgba(184, 134, 11, 0.4) !important;
+            border-right: 1px solid rgba(214, 51, 132, 0.4) !important;
             box-shadow: 1px 0 3px rgba(0,0,0,0.05) !important;
         }
         
         /* Frozen column in header - SOLID background */
         .tabulator-header .tabulator-frozen {
-            background: linear-gradient(135deg, #b8860b 0%, #996515 100%) !important;
+            background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%) !important;
             z-index: 100 !important;
         }
         
@@ -527,7 +527,7 @@ function injectFullStyles() {
         }
         
         .tabulator-row:hover .tabulator-frozen {
-            background: #fdf6e3 !important;
+            background: #fef0f5 !important;
         }
         
         /* =====================================================
@@ -570,8 +570,8 @@ function injectFullStyles() {
         
         .min-max-input:focus {
             outline: none !important;
-            border-color: #b8860b !important;
-            box-shadow: 0 0 0 1px rgba(184, 134, 11, 0.2) !important;
+            border-color: #d63384 !important;
+            box-shadow: 0 0 0 1px rgba(214, 51, 132, 0.2) !important;
         }
         
         /* =====================================================
@@ -606,12 +606,12 @@ function injectFullStyles() {
             
             /* Frozen columns solid background in header */
             .tabulator-header .tabulator-frozen {
-                background: linear-gradient(135deg, #b8860b 0%, #996515 100%) !important;
+                background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%) !important;
                 z-index: 100 !important;
             }
             
             .tabulator-header .tabulator-col.tabulator-frozen {
-                background: linear-gradient(135deg, #b8860b 0%, #996515 100%) !important;
+                background: linear-gradient(135deg, #d63384 0%, #b02a6e 100%) !important;
             }
             
             /* Mobile/tablet: thin scrollbar */
@@ -715,7 +715,7 @@ function injectFullStyles() {
             }
             
             .tabulator-row:hover .tabulator-cell.tabulator-frozen {
-                background: #fdf6e3 !important;
+                background: #fef0f5 !important;
             }
             
             .tabulator-header .tabulator-col.tabulator-frozen {
@@ -726,5 +726,5 @@ function injectFullStyles() {
         }
     `;
     document.head.appendChild(style);
-    console.log('CBB full styles injected with grey background, min/max stacking, frozen columns, desktop scrollbar');
+    console.log('WCBB full styles injected with grey background, min/max stacking, frozen columns, desktop scrollbar');
 }
