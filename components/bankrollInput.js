@@ -74,8 +74,8 @@ export function createBankrollInput(cell, onRendered, success, cancel, editorPar
     });
     
     input.addEventListener('focus', function() {
-        input.style.borderColor = '#b8860b';
-        input.style.boxShadow = '0 0 0 1px rgba(184, 134, 11, 0.2)';
+        input.style.borderColor = '#d63384';
+        input.style.boxShadow = '0 0 0 1px rgba(214, 51, 132, 0.2)';
     });
     input.addEventListener('blur', function() {
         input.style.borderColor = '#ccc';
