@@ -2,6 +2,9 @@
 // Simple flat table - NO expandable rows, NO subtables
 // Pulls from single Supabase table: CBBallWMatchups
 // Spread and Total are fixed-width, equal, no filters
+// FIXED: Container now tightly constrains to column widths on ALL devices
+// FIXED: Scrollbar uses overflow-y auto instead of scroll (only shows when needed)
+// FIXED: Overrides TabManager's applyContainerWidth which sets mobile to 100%
 
 import { BaseTable } from './baseTable.js';
 import { isMobile, isTablet } from '../shared/config.js';
@@ -64,10 +67,10 @@ export class WCBBMatchupsTable extends BaseTable {
             }, 100);
         });
         
+        // FIXED: Run on ALL devices, not just desktop
+        // This ensures mobile/tablet container is constrained after TabManager sets it to 100%
         this.table.on("renderComplete", () => {
-            if (!isMobile() && !isTablet()) {
-                setTimeout(() => this.calculateAndApplyWidths(), 100);
-            }
+            setTimeout(() => this.calculateAndApplyWidths(), 100);
         });
     }
 
@@ -122,47 +125,75 @@ export class WCBBMatchupsTable extends BaseTable {
         if (totalColumn) totalColumn.setWidth(SPREAD_TOTAL_WIDTH);
     }
 
+    // FIXED: Apply tight container width on ALL devices
+    // 
+    // Problem: TabManager.applyContainerWidth() sets mobile containers to width:100% / maxWidth:100vw
+    // and the tabulator to width:100% / maxWidth:100%. This is correct for wide tables (Game Odds) 
+    // that need the full viewport for frozen-column horizontal scrolling. But for the Matchups table 
+    // with only 3 narrow columns, it creates a huge empty space to the right.
+    //
+    // Solution: This method explicitly sets pixel widths on the tabulator element, tableholder, 
+    // header, AND the table-container - overriding whatever TabManager set. On desktop we reserve
+    // 17px for the scrollbar track; on mobile we don't.
     calculateAndApplyWidths() {
         if (!this.table) return;
         const tableElement = this.table.element;
         if (!tableElement) return;
         
-        if (isMobile() || isTablet()) {
-            tableElement.style.width = ''; tableElement.style.minWidth = ''; tableElement.style.maxWidth = '';
-            const tc = tableElement.closest('.table-container');
-            if (tc) { tc.style.width = ''; tc.style.minWidth = ''; tc.style.maxWidth = ''; }
-            return;
-        }
+        const isSmallScreen = isMobile() || isTablet();
         
         try {
             const tableHolder = tableElement.querySelector('.tabulator-tableholder');
-            if (tableHolder) tableHolder.style.overflowY = 'scroll';
             
+            // Get total column width
             let totalColumnWidth = 0;
             this.table.getColumns().forEach(col => { if (col.isVisible()) totalColumnWidth += col.getWidth(); });
             
-            const SCROLLBAR_WIDTH = 17;
+            // Desktop: add scrollbar reservation; Mobile: just use column width
+            const SCROLLBAR_WIDTH = isSmallScreen ? 0 : 17;
             const totalWidth = totalColumnWidth + SCROLLBAR_WIDTH;
             
+            // Use auto so scrollbar only appears when rows overflow the 600px height
+            if (tableHolder) tableHolder.style.overflowY = 'auto';
+            
+            // Constrain the tabulator element itself with explicit pixel values
             tableElement.style.width = totalWidth + 'px';
             tableElement.style.minWidth = totalWidth + 'px';
             tableElement.style.maxWidth = totalWidth + 'px';
             
-            if (tableHolder) { tableHolder.style.width = totalWidth + 'px'; tableHolder.style.maxWidth = totalWidth + 'px'; }
+            if (tableHolder) { 
+                tableHolder.style.width = totalWidth + 'px'; 
+                tableHolder.style.maxWidth = totalWidth + 'px'; 
+            }
             
             const header = tableElement.querySelector('.tabulator-header');
             if (header) header.style.width = totalWidth + 'px';
             
+            // Constrain the table-container parent - use fit-content so it wraps the tabulator
             const tc = tableElement.closest('.table-container');
-            if (tc) { tc.style.width = 'fit-content'; tc.style.minWidth = 'auto'; tc.style.maxWidth = 'none'; }
+            if (tc) { 
+                tc.style.width = 'fit-content'; 
+                tc.style.minWidth = 'auto'; 
+                tc.style.maxWidth = 'none';
+                tc.style.overflowX = 'visible';
+            }
+            
+            console.log(`WCBB Matchups: Set width to ${totalWidth}px (columns: ${totalColumnWidth}px + scrollbar: ${SCROLLBAR_WIDTH}px, device: ${isSmallScreen ? 'mobile' : 'desktop'})`);
         } catch (error) {
             console.error('WCBB Matchups calculateAndApplyWidths error:', error);
         }
     }
 
+    // Called by TabManager on tab switch
     forceRecalculateWidths() {
         const data = this.table ? this.table.getData() : [];
-        if (data.length > 0) { this.scanDataForMaxWidths(data); this.calculateAndApplyWidths(); }
+        if (data.length > 0) { this.scanDataForMaxWidths(data); }
+        this.calculateAndApplyWidths();
+    }
+    
+    // Alias for TabManager compatibility
+    expandNameColumnToFill() {
+        this.calculateAndApplyWidths();
     }
 
     getColumns(isSmallScreen = false) {
@@ -174,7 +205,6 @@ export class WCBBMatchupsTable extends BaseTable {
                 widthGrow: 0,
                 minWidth: isSmallScreen ? 120 : 200,
                 sorter: function(a, b) {
-                    // Parse time from matchup strings like "Team A @ Team B, Feb 15, 6:00 PM EST"
                     const parseTime = (str) => {
                         if (!str) return 0;
                         const match = str.match(/,\s*(\w+)\s+(\d+),\s*(\d+):(\d+)\s*(AM|PM)\s*/i);
