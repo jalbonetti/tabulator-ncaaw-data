@@ -3,17 +3,11 @@
 // Pulls from single Supabase table: CBBallWMatchups
 // Spread and Total are fixed-width, equal, no filters
 //
-// FIXED: The blanket CSS rules in tableStyles.js use !important to set:
-//   .tabulator { width: 100% !important; }
-//   .tabulator .tabulator-tableholder { overflow-y: scroll !important; }  (desktop)
-//   .table-container .tabulator { width: 100% !important; max-width: 100% !important; }  (mobile)
-// These are needed for wide tables (Game Odds) but wrong for the narrow
-// Matchups table. We inject higher-specificity CSS using the container ID to override.
+// WIDTH FIX: Same strategy as cbbMatchups.js — see comments there for full explanation.
 
 import { BaseTable } from './baseTable.js';
 import { isMobile, isTablet } from '../shared/config.js';
 
-// Fixed width for Spread and Total columns - equal, slightly wider than needed
 const SPREAD_TOTAL_WIDTH = 250;
 
 export class WCBBMatchupsTable extends BaseTable {
@@ -22,9 +16,6 @@ export class WCBBMatchupsTable extends BaseTable {
         this._stylesInjected = false;
     }
 
-    // Inject high-specificity CSS overrides for the Matchups table container.
-    // Uses #table0-container (the parent div ID from main.js) to beat the 
-    // class-based .tabulator rules in tableStyles.js even with !important.
     _injectMatchupsStyles() {
         if (this._stylesInjected) return;
         const styleId = 'wcbb-matchups-width-override';
@@ -33,39 +24,39 @@ export class WCBBMatchupsTable extends BaseTable {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            /* Override the blanket width:100%!important and overflow-y:scroll!important 
-               rules from tableStyles.js for the Matchups table only.
-               #table0-container .tabulator has higher specificity than .tabulator alone. */
-            
-            /* ALL DEVICES: Let JS control the width via inline styles */
-            #table0-container .tabulator {
-                width: auto !important;
-                max-width: none !important;
-            }
-            
-            #table0-container .tabulator .tabulator-tableholder {
-                overflow-y: auto !important;
-            }
-            
-            /* DESKTOP: Override the desktop block that forces width:100% and scroll */
             @media screen and (min-width: 1025px) {
+                #table0-container {
+                    width: fit-content !important;
+                    max-width: none !important;
+                    overflow-x: visible !important;
+                }
+                
                 #table0-container .tabulator {
                     width: auto !important;
                     max-width: none !important;
                 }
+                
                 #table0-container .tabulator .tabulator-tableholder {
                     overflow-y: auto !important;
                 }
             }
             
-            /* MOBILE/TABLET: Override width only - do NOT touch overflow-x 
-               because the frozen-column system needs overflow-x:hidden on the 
-               container so that tabulator-tableholder becomes the scroll target */
             @media screen and (max-width: 1024px) {
+                #table0-container {
+                    max-width: 100vw !important;
+                    overflow-x: auto !important;
+                    overflow-y: visible !important;
+                    -webkit-overflow-scrolling: touch !important;
+                }
+                
                 #table0-container .tabulator {
-                    width: auto !important;
-                    min-width: auto !important;
                     max-width: none !important;
+                    min-width: 0 !important;
+                }
+                
+                #table0-container .tabulator .tabulator-tableholder {
+                    overflow-x: visible !important;
+                    overflow-y: auto !important;
                 }
             }
         `;
@@ -75,7 +66,6 @@ export class WCBBMatchupsTable extends BaseTable {
     }
 
     initialize() {
-        // Inject override styles BEFORE table creation
         this._injectMatchupsStyles();
         
         const isSmallScreen = isMobile() || isTablet();
@@ -127,7 +117,6 @@ export class WCBBMatchupsTable extends BaseTable {
             }, 100);
         });
         
-        // Run on ALL devices
         this.table.on("renderComplete", () => {
             setTimeout(() => this.calculateAndApplyWidths(), 100);
         });
@@ -194,8 +183,6 @@ export class WCBBMatchupsTable extends BaseTable {
             const SCROLLBAR_WIDTH = isSmallScreen ? 0 : 17;
             const totalWidth = totalColumnWidth + SCROLLBAR_WIDTH;
             
-            // Set inline styles - these now work because the CSS overrides removed the 
-            // blanket !important width:100% rules for #table0-container
             tableElement.style.width = totalWidth + 'px';
             tableElement.style.minWidth = totalWidth + 'px';
             tableElement.style.maxWidth = totalWidth + 'px';
@@ -208,20 +195,19 @@ export class WCBBMatchupsTable extends BaseTable {
             const header = tableElement.querySelector('.tabulator-header');
             if (header) header.style.width = totalWidth + 'px';
             
-            const tc = tableElement.closest('.table-container');
-            if (tc) { 
-                if (isSmallScreen) {
-                    // Mobile: constrain width but keep overflow-x hidden for frozen columns
-                    tc.style.width = totalWidth + 'px';
-                    tc.style.maxWidth = totalWidth + 'px';
-                    tc.style.overflowX = 'hidden';
-                } else {
-                    // Desktop: fit-content with grey void filling the rest
-                    tc.style.width = 'fit-content'; 
-                    tc.style.minWidth = 'auto'; 
-                    tc.style.maxWidth = 'none';
+            if (isSmallScreen) {
+                const tc = tableElement.closest('.table-container');
+                if (tc) {
+                    tc.style.width = '';
+                    tc.style.minWidth = '';
                     tc.style.overflowX = '';
                 }
+                
+                // Use setProperty with !important to beat tableStyles.js 
+                // .tabulator { width: 100% !important }
+                tableElement.style.setProperty('width', totalWidth + 'px', 'important');
+                tableElement.style.setProperty('min-width', totalWidth + 'px', 'important');
+                tableElement.style.setProperty('max-width', totalWidth + 'px', 'important');
             }
             
             console.log(`WCBB Matchups: Set width to ${totalWidth}px (columns: ${totalColumnWidth}px + scrollbar: ${SCROLLBAR_WIDTH}px, device: ${isSmallScreen ? 'mobile' : 'desktop'})`);
@@ -245,7 +231,7 @@ export class WCBBMatchupsTable extends BaseTable {
             {
                 title: "Matchup", 
                 field: "Matchup", 
-                frozen: isSmallScreen,
+                // NOT frozen - Matchups table has no frozen columns
                 widthGrow: 0,
                 minWidth: isSmallScreen ? 120 : 200,
                 sorter: function(a, b) {
